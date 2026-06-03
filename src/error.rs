@@ -21,8 +21,8 @@ use core::fmt;
 ///
 /// # Construction
 ///
-/// Prefer constructing via [`ResultExt::annotate`] and
-/// [`ResultExt::annotate_with`] rather than calling constructors directly.
+/// Prefer constructing via [`crate::ResultExt::annotate`] and
+/// [`crate::ResultExt::annotate_with`] rather than calling constructors directly.
 /// The constructors are provided for cases where you need to build an
 /// `Error<E>` outside of a `Result` chain.
 ///
