@@ -2,7 +2,6 @@
 
 [![Crates.io](https://img.shields.io/crates/v/erra.svg)](https://crates.io/crates/erra)
 [![Docs.rs](https://docs.rs/erra/badge.svg)](https://docs.rs/erra)
-[![CI](https://github.com/ZaudRehman/erra/actions/workflows/ci.yml/badge.svg)](https://github.com/ZaudRehman/erra/actions)
 [![MSRV: 1.60.0](https://img.shields.io/badge/MSRV-1.60.0-blue.svg)](https://releases.rs/docs/1.60.0/)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
@@ -496,7 +495,7 @@ considered, and the impact on existing consumers.
 
 ## Author
 
-**Zaud Rehman** — [@ZaudRehman](https://github.com/ZaudRehman) ·
+**Zaud Rehman**: [@ZaudRehman](https://github.com/ZaudRehman) ·
 [@RehmanZaud](https://twitter.com/RehmanZaud)
 
 ***
@@ -510,6 +509,6 @@ Licensed under either of:
 
 at your option.
 
-Contribution — unless you explicitly state otherwise, any contribution
+Contribution - unless you explicitly state otherwise, any contribution
 intentionally submitted for inclusion in this crate by you shall be
 dual-licensed as above, without any additional terms or conditions.
