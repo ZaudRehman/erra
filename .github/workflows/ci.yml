@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [stable, beta, "1.80.0"]
+        rust: [stable, beta, "1.65.0"]
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
@@ -32,13 +32,28 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Test — no-default-features
-        run: cargo test --no-default-features
+        run: cargo test --lib --no-default-features
 
       - name: Test — alloc only
-        run: cargo test --no-default-features --features alloc
+        run: cargo test --lib --no-default-features --features alloc
 
       - name: Test — all features
-        run: cargo test --all-features
+        run: cargo test --lib --all-features
+
+  bench-check:
+    name: Bench compile check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check benches compile
+        run: cargo bench --no-run --all-features
 
   clippy:
     name: Clippy
