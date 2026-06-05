@@ -2,7 +2,7 @@
 name          = "erra"
 version       = "0.1.0"
 edition       = "2021"
-rust-version  = "1.65.0"
+rust-version  = "1.85.0"
 authors       = ["Zaud Rehman"]
 description   = "Zero-dependency, type-preserving error annotation for Result"
 license       = "MIT OR Apache-2.0"
@@ -23,7 +23,7 @@ alloc   = []
 
 [dev-dependencies]
 static_assertions = "1"
-criterion = { version = "0.4", default-features = false }
+criterion = { version = "0.5", default-features = false }
 
 [[bench]]
 name    = "overhead"
