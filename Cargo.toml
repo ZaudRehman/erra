@@ -23,7 +23,7 @@ alloc   = []
 
 [dev-dependencies]
 static_assertions = "1"
-criterion = { version = "0.5", default-features = false }
+criterion = { version = "0.4", default-features = false }
 
 [[bench]]
 name    = "overhead"
