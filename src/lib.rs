@@ -190,7 +190,7 @@
 //!
 //! ## MSRV
 //!
-//! Rust **1.60.0**. No nightly features. No const generics. No GATs.
+//! Rust **1.85.0**. No nightly features. No const generics. No GATs.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![forbid(unsafe_code)]
