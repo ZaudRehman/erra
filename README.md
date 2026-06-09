@@ -3,14 +3,14 @@
 [![Crates.io](https://img.shields.io/crates/v/erra.svg)](https://crates.io/crates/erra)
 [![Docs.rs](https://docs.rs/erra/badge.svg)](https://docs.rs/erra)
 [![CI](https://github.com/ZaudRehman/erra/actions/workflows/ci.yml/badge.svg)](https://github.com/ZaudRehman/erra/actions)
-[![MSRV: 1.85.0](https://img.shields.io/badge/MSRV-1.85.0-blue.svg)](https://releases.rs/docs/1.85.0/)
+[![MSRV: 1.60.0](https://img.shields.io/badge/MSRV-1.60.0-blue.svg)](https://releases.rs/docs/1.60.0/)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
 Zero-dependency, `no_std`-compatible, **type-preserving** error annotation for `Result<T, E>`.
 
 `erra` sits between raw `?` propagation and full frameworks like `anyhow` or `eyre`. Annotate any
 `Result` with a human-readable string at the call site, keep `E` fully typed and pattern-matchable,
-and pay zero cost on the `Ok` path -- with no transitive dependencies.
+and pay zero cost on the `Ok` path — with no transitive dependencies.
 
 ---
 
@@ -50,7 +50,7 @@ with `?`, without a new enum variant.
 use erra::ResultExt;
 use std::fs;
 
-fn load_config(path: &str) -> Result<String, erra::Error<std::io::Error>> {
+fn load_config(path: &str) -> erra::Result<String, std::io::Error> {
     let contents = fs::read_to_string(path)
         .annotate("reading application config")?;
     Ok(contents)
@@ -65,7 +65,7 @@ One import. One method. `E` is preserved. `?` works unchanged. No new types.
 
 ```toml
 [dependencies]
-erra = "0.1"
+erra = "0.2"
 ```
 
 ---
@@ -78,7 +78,7 @@ erra = "0.1"
 use erra::ResultExt;
 use std::io;
 
-fn read_config(path: &str) -> Result<String, erra::Error<io::Error>> {
+fn read_config(path: &str) -> erra::Result<String, io::Error> {
     std::fs::read_to_string(path).annotate("reading application config")
 }
 ```
@@ -92,7 +92,7 @@ heap-allocated. On the `Ok` path, no work is done.
 use erra::ResultExt;
 use std::io;
 
-fn read_file(path: &str) -> Result<String, erra::Error<io::Error>> {
+fn read_file(path: &str) -> erra::Result<String, io::Error> {
     std::fs::read_to_string(path)
         .annotate_with(|| format!("reading file at {path}"))
 }
@@ -107,7 +107,7 @@ and no allocation.
 use erra::ResultExt;
 use std::io;
 
-fn process(path: &str) -> Result<(), erra::Error<io::Error>> {
+fn process(path: &str) -> erra::Result<(), io::Error> {
     std::fs::read_to_string(path).annotate("process: read")?;
     Ok(())
 }
@@ -115,9 +115,9 @@ fn process(path: &str) -> Result<(), erra::Error<io::Error>> {
 match process("missing.toml") {
     Ok(_) => {}
     Err(e) => match e.source.kind() {
-        io::ErrorKind::NotFound         => eprintln!("file not found"),
+        io::ErrorKind::NotFound => eprintln!("file not found"),
         io::ErrorKind::PermissionDenied => eprintln!("permission denied"),
-        _                               => eprintln!("io error: {e}"),
+        _ => eprintln!("io error: {e}"),
     },
 }
 ```
@@ -134,17 +134,16 @@ fn leaf() -> Result<(), io::Error> {
     Err(io::Error::from(io::ErrorKind::NotFound))
 }
 
-fn middle() -> Result<(), erra::Error<io::Error>> {
+fn middle() -> erra::Result<(), io::Error> {
     leaf().annotate("middle: reading file")
 }
 
-fn outer() -> Result<(), erra::Error<erra::Error<io::Error>>> {
+fn outer() -> erra::Result<(), erra::Error<io::Error>> {
     middle().annotate("outer: loading config")
 }
 
 let err = outer().unwrap_err();
 println!("{err}");
-// outer: loading config: middle: reading file: entity not found
 ```
 
 Each annotation layer wraps the previous. `Display` presents them outermost-first. The
@@ -224,7 +223,7 @@ standard `From` path. No adapter needed:
 ```rust
 use erra::ResultExt;
 
-fn annotated() -> Result<String, erra::Error<std::io::Error>> {
+fn annotated() -> erra::Result<String, std::io::Error> {
     std::fs::read_to_string("app.toml").annotate("reading config")
 }
 
@@ -250,7 +249,7 @@ let file = fs::read(&path).context("reading config")?;
 // After
 use erra::ResultExt;
 let file = fs::read(&path).annotate("reading config")?;
-// return type: Result<T, erra::Error<io::Error>> -- E is preserved
+// return type: erra::Result<T, io::Error> -- E is preserved
 ```
 
 Migration is incremental. Each changed function is a self-contained diff with no impact on adjacent
@@ -262,23 +261,23 @@ code.
 
 | Flag    | Default          | Enables                                          |
 |---------|------------------|--------------------------------------------------|
-| `std`   | **yes**          | `std::error::Error` impl; implies `alloc`        |
+| `std`   | yes              | `std::error::Error` impl; implies `alloc`        |
 | `alloc` | implied by `std` | `annotate_with`, `Cow::Owned`, `Error::new_owned`|
 
 ### Default (`std`)
 
 ```toml
-erra = "0.1"
+erra = "0.2"
 ```
 
 All functionality available.
 
 ### `alloc` only
 
-For targets with a global allocator but no `std` (WASM, embedded OS kernels):
+For targets with a global allocator but no `std`:
 
 ```toml
-erra = { version = "0.1", default-features = false, features = ["alloc"] }
+erra = { version = "0.2", default-features = false, features = ["alloc"] }
 ```
 
 `annotate_with` and `new_owned` are available. `std::error::Error` is not implemented.
@@ -288,7 +287,7 @@ erra = { version = "0.1", default-features = false, features = ["alloc"] }
 For bare-metal targets with no heap:
 
 ```toml
-erra = { version = "0.1", default-features = false }
+erra = { version = "0.2", default-features = false }
 ```
 
 Only `.annotate("static string")` is available. No heap allocation anywhere in `erra`. `Display`
@@ -308,56 +307,68 @@ cargo check --target thumbv6m-none-eabi --no-default-features
 use erra::ResultExt;
 ```
 
-| Method          | Signature                                                                    | Notes                                      |
-|-----------------|------------------------------------------------------------------------------|--------------------------------------------|
-| `annotate`      | `fn annotate(self, msg: &'static str) -> Result<T, Error<E>>`                | Zero allocation. Always available.         |
-| `annotate_with` | `fn annotate_with<F: FnOnce() -> String>(self, f: F) -> Result<T, Error<E>>` | Closure skipped on `Ok`. Requires `alloc`. |
+| Method | Signature | Notes |
+|--------|-----------|-------|
+| `annotate` | `fn annotate(self, msg: &'static str) -> erra::Result<T, E>` | Zero allocation. Always available. |
+| `annotate_with` | `fn annotate_with<F: FnOnce() -> String>(self, f: F) -> erra::Result<T, E>` | Closure skipped on `Ok`. Requires `alloc`. |
 
 ### `Error<E>` type
 
 ```rust
 pub struct Error<E> {
-    pub context: Cow<'static, str>,
+    pub context: core::borrow::Cow<'static, str>,
     pub source: E,
 }
 ```
 
-| Method        | Signature                                  | Notes                           |
-|---------------|--------------------------------------------|---------------------------------|
-| `new`         | `fn new(context: &'static str, source: E) -> Self` | Zero allocation constructor.   |
-| `new_owned`   | `fn new_owned(context: String, source: E) -> Self` | Requires `alloc` or `std`.     |
-| `context`     | `fn context(&self) -> &str`                | Borrows the annotation string.  |
-| `into_source` | `fn into_source(self) -> E`                | Consumes self, returns `E`.     |
-| `map`         | `fn map<F, E2>(self, f: F) -> Error<E2>`   | Transforms `E`, preserves context. |
+| Method | Signature | Notes |
+|--------|-----------|-------|
+| `new` | `fn new(context: &'static str, source: E) -> Self` | Zero allocation constructor. |
+| `new_owned` | `fn new_owned(context: String, source: E) -> Self` | Requires `alloc` or `std`. |
+| `context` | `fn context(&self) -> &str` | Borrows the annotation string. |
+| `into_source` | `fn into_source(self) -> E` | Consumes self, returns `E`. |
+| `map` | `fn map<F, E2>(self, f: F) -> Error<E2>` | Transforms `E`, preserves context. |
 
 ### Trait impls
 
-| Trait                | Condition                                          |
-|----------------------|----------------------------------------------------|
-| `Display`            | `E: Display`                                       |
-| `Debug`              | `E: Debug`                                         |
-| `Clone`              | `E: Clone`                                         |
-| `PartialEq`          | `E: PartialEq`                                     |
-| `Eq`                 | `E: Eq`                                            |
-| `std::error::Error`  | `E: std::error::Error + 'static` and feature `std` |
-| `Send`               | `E: Send` (auto-trait)                             |
-| `Sync`               | `E: Sync` (auto-trait)                             |
-| `From<E>`            | **Never** -- context must always be explicit       |
+| Trait | Condition |
+|-------|-----------|
+| `Display` | `E: Display` |
+| `Debug` | `E: Debug` |
+| `Clone` | `E: Clone` |
+| `PartialEq` | `E: PartialEq` |
+| `Eq` | `E: Eq` |
+| `std::error::Error` | `E: std::error::Error + 'static` and feature `std` |
+| `Send` | `E: Send` (auto-trait) |
+| `Sync` | `E: Sync` (auto-trait) |
+| `From<E>` | **Never** — context must always be explicit |
+
+### Convenience alias
+
+```rust
+use erra::Result;
+
+fn example() -> Result<(), std::io::Error> {
+    Ok(())
+}
+```
+
+`Result<T, E>` is a shorthand for `core::result::Result<T, erra::Error<E>>`.
 
 ---
 
 ## Comparison
 
-|                       | `erra`            | `anyhow::Context`   | `thiserror`    | `error-context`  |
-|-----------------------|-------------------|---------------------|----------------|------------------|
-| Type preserved        | **yes**           | no (erased)         | yes            | yes              |
-| Pattern match on `E`  | **compile-time**  | runtime downcast    | yes            | yes              |
-| Zero dependencies     | **yes**           | no                  | no (proc-macro)| yes              |
-| `no_std`              | **yes**           | no                  | no             | partial          |
-| No proc-macro         | **yes**           | yes                 | no             | yes              |
-| Backtrace             | no                | yes                 | no             | no               |
-| Actively maintained   | **yes**           | yes                 | yes            | no (abandoned)   |
-| Library-safe API      | **yes**           | no                  | yes            | yes              |
+|                      | `erra` | `anyhow::Context` | `thiserror` | `error-context` |
+|----------------------|--------|-------------------|-------------|-----------------|
+| Type preserved       | yes    | no (erased)       | yes         | yes             |
+| Pattern match on `E` | compile-time | runtime downcast | yes | yes |
+| Zero dependencies    | yes    | no                | no (proc-macro) | yes |
+| `no_std`             | yes    | no                | no          | partial         |
+| No proc-macro        | yes    | yes               | no          | yes             |
+| Backtrace            | no     | yes               | no          | no              |
+| Actively maintained  | yes    | yes               | yes         | no (abandoned)  |
+| Library-safe API     | yes    | no                | yes         | yes             |
 
 ### When to use `anyhow` instead
 
@@ -376,22 +387,12 @@ pub struct Error<E> {
 
 ## Performance
 
-In a release build with LTO, `.annotate("msg")` on `Ok(v)` is a zero-cost identity pass-through.
-Representative output from `cargo bench` on Apple M2:
+In a release build with LTO, `.annotate("msg")` on `Ok(v)` is intended to be a zero-cost identity
+pass-through. `annotate_with` defers work until the `Err` path and does not invoke its closure on
+the `Ok` path.
 
-```text
-ok_path/bare_unwrap                   time: [312.45 ps 313.02 ps 313.67 ps]
-ok_path/annotate_static_on_ok         time: [312.89 ps 313.44 ps 314.11 ps]
-ok_path/annotate_with_closure_on_ok   time: [313.01 ps 313.58 ps 314.22 ps]
-
-err_path/bare_unwrap_err              time: [1.4821 ns 1.4897 ns 1.4981 ns]
-err_path/annotate_static_on_err       time: [2.1043 ns 2.1119 ns 2.1204 ns]
-err_path/annotate_with_closure_on_err time: [18.334 ns 18.412 ns 18.498 ns]
-```
-
-The three `ok_path` results are statistically indistinguishable. On the `Err` path, static
-annotation adds one `Cow::Borrowed` construction; dynamic annotation adds a `format!` and a heap
-allocation.
+The exact microbenchmark numbers are intentionally omitted from the README so they do not age
+faster than the code.
 
 ```text
 cargo bench
@@ -412,7 +413,7 @@ cargo bench -- ok_path
 
 ## MSRV
 
-Rust **1.85.0**. No nightly features. No GATs. No RPITIT.
+Rust **1.60.0**. No nightly features. No GATs. No RPITIT.
 
 MSRV increases are treated as **minor** version bumps and are documented in
 [CHANGELOG.md](CHANGELOG.md). CI tests the declared minimum on every push.
@@ -422,14 +423,14 @@ MSRV increases are treated as **minor** version bumps and are documented in
 ## Testing
 
 ```text
-cargo test --all-features                                          # all features
-cargo test --no-default-features                                   # no_std static path
-cargo test --no-default-features --features alloc                  # alloc, no std
-cargo clippy --all-features -- -D warnings                         # zero warnings
-cargo doc --all-features --no-deps                                 # docs check
-cargo check --target thumbv6m-none-eabi --no-default-features      # embedded target
-cargo geiger                                                       # safety audit
-cargo bench                                                        # benchmarks
+cargo test --all-features                           # all features
+cargo test --no-default-features                    # no_std static path
+cargo test --no-default-features --features alloc   # alloc, no std
+cargo clippy --all-features -- -D warnings          # zero warnings
+cargo doc --all-features --no-deps                  # docs check
+cargo check --target thumbv6m-none-eabi --no-default-features
+cargo geiger                                       # safety audit
+cargo bench                                        # benchmarks
 ```
 
 ---

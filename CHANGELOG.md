@@ -6,7 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 For pre-1.0 releases, minor version bumps (`0.x.0`) may contain breaking
-changes to the public API. Patch bumps (`0.1.x`) are strictly non-breaking.
+changes to the public API. Patch bumps (`0.x.y`) are strictly non-breaking.
 MSRV bumps are treated as minor version increments.
 
 ---
@@ -14,6 +14,46 @@ MSRV bumps are treated as minor version increments.
 ## [Unreleased]
 
 _Nothing yet._
+
+---
+
+## [0.2.0] — 2026-06-09
+
+### Added
+
+- `Result<T, E>` type alias at the crate root as shorthand for
+  `core::result::Result<T, erra::Error<E>>`.
+- `prelude` module exporting `ResultExt` for convenient glob imports.
+
+### Changed
+
+- Reworked crate-level documentation in `src/lib.rs` to be shorter, clearer,
+  and easier to read.
+- Rewrote `src/error.rs` documentation to use a more direct, maintainer-style
+  tone while keeping the public API fully documented.
+- Rewrote `src/ext.rs` documentation to match the rest of the crate and reduce
+  overly polished or repetitive phrasing.
+- Standardized examples across the crate so signatures, imports, and feature
+  gating are more consistent.
+- Clarified the role of the root `Result` alias and explicitly kept it out of
+  the prelude to avoid shadowing the standard library `Result`.
+- Tightened documentation around `Display`, `source()`, and nested annotation
+  behavior.
+
+### Performance
+
+- Added and reviewed benchmark coverage for happy-path, error-path, chaining,
+  throughput, and formatting overhead.
+- Confirmed that static annotation remains effectively free on the `Ok` path in
+  release builds.
+- Confirmed that `annotate_with` does not evaluate its closure on the `Ok` path
+  and shifts dynamic formatting cost to the `Err` path only.
+
+### Tooling
+
+- Expanded CI coverage to validate feature combinations, `no_std` compilation,
+  docs, clippy, and benchmark compilation.
+- Kept MSRV policy at Rust 1.60.0 and aligned release prep around enforcing it.
 
 ---
 
@@ -79,5 +119,6 @@ _Nothing yet._
 
 ---
 
-[Unreleased]: https://github.com/ZaudRehman/erra/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ZaudRehman/erra/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ZaudRehman/erra/releases/tag/v0.2.0
 [0.1.0]: https://github.com/ZaudRehman/erra/releases/tag/v0.1.0

@@ -1,8 +1,8 @@
 [package]
 name          = "erra"
-version       = "0.1.0"
+version       = "0.2.0"
 edition       = "2021"
-rust-version  = "1.85.0"
+rust-version  = "1.60.0"
 authors       = ["Zaud Rehman"]
 description   = "Zero-dependency, type-preserving error annotation for Result"
 license       = "MIT OR Apache-2.0"
@@ -19,7 +19,6 @@ std     = ["alloc"]
 alloc   = []
 
 [dependencies]
-# intentionally empty — this is load-bearing
 
 [dev-dependencies]
 static_assertions = "1"

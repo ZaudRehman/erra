@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [stable, beta, "1.85.0"]
+        rust: ["1.60.0", stable, beta]
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
@@ -70,13 +70,13 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Clippy — no-default-features
-        run: cargo clippy --no-default-features -- -D warnings
+        run: cargo clippy --all-targets --no-default-features -- -D warnings
 
       - name: Clippy — alloc
-        run: cargo clippy --no-default-features --features alloc -- -D warnings
+        run: cargo clippy --all-targets --no-default-features --features alloc -- -D warnings
 
       - name: Clippy — all features
-        run: cargo clippy --all-features -- -D warnings
+        run: cargo clippy --all-targets --all-features -- -D warnings
 
   no-std:
     name: no_std compile check
@@ -111,3 +111,17 @@ jobs:
         run: cargo doc --all-features --no-deps
         env:
           RUSTDOCFLAGS: -D warnings
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable + rustfmt
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: cargo fmt
+        run: cargo fmt --all --check
