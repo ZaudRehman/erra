@@ -23,6 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install stable (for MSRV resolution)
+        if: matrix.rust == '1.75.0'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Generate MSRV-aware lockfile
+        if: matrix.rust == '1.75.0'
+        run: cargo +stable generate-lockfile
+
       - name: Install Rust ${{ matrix.rust }}
         uses: dtolnay/rust-toolchain@master
         with:
