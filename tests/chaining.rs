@@ -104,8 +104,7 @@ fn two_layer_display_all_levels_present() {
     assert!(s.contains("outer: loading application config"), "{s}");
     assert!(s.contains("middle: reading file from disk"), "{s}");
     assert!(
-        s.len()
-            > "outer: loading application config: middle: reading file from disk: ".len(),
+        s.len() > "outer: loading application config: middle: reading file from disk: ".len(),
         "io::Error Display should contribute text beyond the erra context strings: {s}"
     );
 }

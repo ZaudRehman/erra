@@ -2,7 +2,7 @@
 name          = "erra"
 version       = "0.2.0"
 edition       = "2021"
-rust-version  = "1.60.0"
+rust-version  = "1.75.0"
 authors       = ["Zaud Rehman"]
 description   = "Zero-dependency, type-preserving error annotation for Result"
 license       = "MIT OR Apache-2.0"

@@ -53,7 +53,7 @@ _Nothing yet._
 
 - Expanded CI coverage to validate feature combinations, `no_std` compilation,
   docs, clippy, and benchmark compilation.
-- Kept MSRV policy at Rust 1.60.0 and aligned release prep around enforcing it.
+- Kept MSRV policy at Rust 1.75.0 and aligned release prep around enforcing it.
 
 ---
 
@@ -96,7 +96,7 @@ _Nothing yet._
     `Display` and `Debug` via `core::fmt`; zero heap allocation anywhere
     in the crate
 - `#![forbid(unsafe_code)]` — no `unsafe` in the entire crate
-- MSRV: Rust 1.60.0
+- MSRV: Rust 1.75.0
 - Dual-licensed MIT OR Apache-2.0
 
 ### Design decisions recorded

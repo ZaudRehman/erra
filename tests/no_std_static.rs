@@ -71,8 +71,7 @@ impl<const N: usize> WriteBuf<N> {
     /// test file originate from `fmt::Display` / `fmt::Debug` impls that
     /// produce valid UTF-8, so this never triggers in practice.
     fn as_str(&self) -> &str {
-        core::str::from_utf8(&self.buf[..self.pos])
-            .expect("WriteBuf contains invalid UTF-8")
+        core::str::from_utf8(&self.buf[..self.pos]).expect("WriteBuf contains invalid UTF-8")
     }
 }
 
@@ -108,8 +107,8 @@ enum HalError {
 impl core::fmt::Display for HalError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            HalError::Timeout        => f.write_str("hardware timeout"),
-            HalError::BusError       => f.write_str("bus error"),
+            HalError::Timeout => f.write_str("hardware timeout"),
+            HalError::BusError => f.write_str("bus error"),
             HalError::InvalidAddress => f.write_str("invalid address"),
         }
     }
@@ -303,9 +302,7 @@ fn context_accessor_returns_correct_str() {
 
 #[test]
 fn context_accessor_on_annotated_result() {
-    let err = Err::<(), u32>(1)
-        .annotate("context string")
-        .unwrap_err();
+    let err = Err::<(), u32>(1).annotate("context string").unwrap_err();
     assert_eq!(err.context(), "context string");
 }
 
@@ -424,8 +421,8 @@ fn embedded_pattern_match_on_source_without_downcast() {
 
     let root: HalError = err.into_source().into_source();
     match root {
-        HalError::Timeout        => { /* handled */ }
-        HalError::BusError       => panic!("unexpected bus error"),
+        HalError::Timeout => { /* handled */ }
+        HalError::BusError => panic!("unexpected bus error"),
         HalError::InvalidAddress => panic!("unexpected invalid address"),
     }
 }

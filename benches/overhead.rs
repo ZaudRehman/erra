@@ -104,8 +104,7 @@ fn bench_ok_path(c: &mut Criterion) {
     // dead code on this path.
     group.bench_function("annotate_static_on_ok", |b| {
         b.iter(|| {
-            let r = make_ok(black_box(42))
-                .annotate("reading application config");
+            let r = make_ok(black_box(42)).annotate("reading application config");
             r.unwrap()
         })
     });
@@ -192,11 +191,7 @@ fn bench_chain(c: &mut Criterion) {
     let mut group = c.benchmark_group("chain");
 
     group.bench_function("one_layer", |b| {
-        b.iter(|| {
-            make_err_u32(black_box(1))
-                .annotate("layer 1")
-                .unwrap_err()
-        })
+        b.iter(|| make_err_u32(black_box(1)).annotate("layer 1").unwrap_err())
     });
 
     group.bench_function("two_layers", |b| {
@@ -257,9 +252,7 @@ fn bench_throughput(c: &mut Criterion) {
                 b.iter(|| {
                     let mut sum = 0i32;
                     for i in 0..n {
-                        let v = make_ok(black_box(i as i32))
-                            .annotate("batch step")
-                            .unwrap();
+                        let v = make_ok(black_box(i as i32)).annotate("batch step").unwrap();
                         sum = sum.wrapping_add(v);
                     }
                     black_box(sum)
@@ -302,9 +295,7 @@ fn bench_display_cost(c: &mut Criterion) {
     let mut group = c.benchmark_group("display_cost");
 
     group.bench_function("display_one_layer", |b| {
-        let err = make_err()
-            .annotate("reading config")
-            .unwrap_err();
+        let err = make_err().annotate("reading config").unwrap_err();
         b.iter(|| {
             let s = black_box(&err).to_string();
             black_box(s)
@@ -323,9 +314,7 @@ fn bench_display_cost(c: &mut Criterion) {
     });
 
     group.bench_function("debug_one_layer", |b| {
-        let err = make_err()
-            .annotate("reading config")
-            .unwrap_err();
+        let err = make_err().annotate("reading config").unwrap_err();
         b.iter(|| {
             let s = format!("{:?}", black_box(&err));
             black_box(s)

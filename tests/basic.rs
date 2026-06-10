@@ -92,10 +92,7 @@ fn display_format_is_context_colon_space_source() {
 
 #[test]
 fn display_with_io_error() {
-    let e = Error::new(
-        "reading manifest",
-        io::Error::from(io::ErrorKind::NotFound),
-    );
+    let e = Error::new("reading manifest", io::Error::from(io::ErrorKind::NotFound));
 
     let s = e.to_string();
     assert!(
@@ -118,7 +115,10 @@ fn display_with_numeric_source() {
 fn debug_output_contains_context_field() {
     let e = Error::new("my context", 0u32);
     let s = format!("{e:?}");
-    assert!(s.contains("my context"), "Debug output missing context: {s}");
+    assert!(
+        s.contains("my context"),
+        "Debug output missing context: {s}"
+    );
 }
 
 #[test]
@@ -190,10 +190,7 @@ fn into_source_returns_original_error_discarding_context() {
 
 #[test]
 fn into_source_with_io_error_preserves_kind() {
-    let e = Error::new(
-        "connect",
-        io::Error::from(io::ErrorKind::ConnectionRefused),
-    );
+    let e = Error::new("connect", io::Error::from(io::ErrorKind::ConnectionRefused));
 
     let source = e.into_source();
     assert_eq!(source.kind(), io::ErrorKind::ConnectionRefused);
@@ -316,8 +313,7 @@ mod alloc_tests {
         let path = "/var/run/app.pid";
         let attempt = 3usize;
 
-        let result: Result<(), io::Error> =
-            Err(io::Error::from(io::ErrorKind::PermissionDenied));
+        let result: Result<(), io::Error> = Err(io::Error::from(io::ErrorKind::PermissionDenied));
 
         let err = result
             .annotate_with(|| format!("attempt {attempt} reading {path}"))

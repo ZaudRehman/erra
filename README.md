@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/erra.svg)](https://crates.io/crates/erra)
 [![Docs.rs](https://docs.rs/erra/badge.svg)](https://docs.rs/erra)
 [![CI](https://github.com/ZaudRehman/erra/actions/workflows/ci.yml/badge.svg)](https://github.com/ZaudRehman/erra/actions)
-[![MSRV: 1.60.0](https://img.shields.io/badge/MSRV-1.60.0-blue.svg)](https://releases.rs/docs/1.60.0/)
+[![MSRV: 1.75.0](https://img.shields.io/badge/MSRV-1.75.0-blue.svg)](https://releases.rs/docs/1.75.0/)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
 Zero-dependency, `no_std`-compatible, **type-preserving** error annotation for `Result<T, E>`.
@@ -413,7 +413,7 @@ cargo bench -- ok_path
 
 ## MSRV
 
-Rust **1.60.0**. No nightly features. No GATs. No RPITIT.
+Rust **1.75.0**. No nightly features. No GATs. No RPITIT.
 
 MSRV increases are treated as **minor** version bumps and are documented in
 [CHANGELOG.md](CHANGELOG.md). CI tests the declared minimum on every push.
