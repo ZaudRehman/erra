@@ -27,12 +27,13 @@ jobs:
         if: matrix.rust == '1.75.0'
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Pin clap to Edition 2021
+      - name: Pin dependencies for MSRV
         if: matrix.rust == '1.75.0'
         run: |
           cargo +stable generate-lockfile
           cargo +stable update -p clap --precise 4.5.23
           cargo +stable update -p clap_builder --precise 4.5.23
+          cargo +stable update -p half --precise 2.4.1
 
       - name: Install Rust ${{ matrix.rust }}
         uses: dtolnay/rust-toolchain@master
