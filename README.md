@@ -362,11 +362,11 @@ fn example() -> Result<(), std::io::Error> {
 |                      | `erra` | `anyhow::Context` | `thiserror` | `error-context` |
 |----------------------|--------|-------------------|-------------|-----------------|
 | Type preserved       | yes    | no (erased)       | yes         | yes             |
-| Pattern match on `E` | compile-time | runtime downcast | yes | yes |
-| Zero dependencies    | yes    | no                | no (proc-macro) | yes |
-| `no_std`             | yes    | no                | no          | partial         |
+| Pattern match on `E` | compile-time | runtime downcast | yes    | yes             |
+| Zero dependencies    | yes    | yes               | no (proc-macro) | yes         |
+| `no_std`             | yes    | alloc only        | yes         | partial         |
 | No proc-macro        | yes    | yes               | no          | yes             |
-| Backtrace            | no     | yes               | no          | no              |
+| Backtrace            | no     | yes               | yes         | no              |
 | Actively maintained  | yes    | yes               | yes         | no (abandoned)  |
 | Library-safe API     | yes    | no                | yes         | yes             |
 
